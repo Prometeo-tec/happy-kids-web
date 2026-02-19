@@ -1,432 +1,364 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, MapPin, Clock, Star, PartyPopper, Music, Cake, ShieldCheck, Menu, X, ChevronRight, Smile, Waves } from 'lucide-react';
+import { 
+  Phone, MapPin, Clock, Star, 
+  Music, Utensils, ShieldCheck, Menu, 
+  X, Smile, ChevronRight, Heart, Pizza, 
+  Check, ChevronLeft, Calendar, Camera,
+  Users, Coffee, Zap, Send
+} from 'lucide-react';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  const [currentInstalacion, setCurrentInstalacion] = useState(0);
+  const [selectedPackage, setSelectedPackage] = useState("Paquete Mágico");
 
-  // Efecto para el navbar al hacer scroll
+  // Imágenes del Hero
+  const heroImages = [
+    'https://images.unsplash.com/photo-1533294485618-f58a74030b33?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1472653376319-504514a709d4?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80'
+  ];
+
+  // Instalaciones (Carpeta /img/*.png)
+  const instalaciones = [
+    { url: '/img/instalacion1.png', label: 'Área de Juegos Principal' },
+    { url: '/img/instalacion2.png', label: 'Zona de Comedor' },
+    { url: '/img/instalacion3.png', label: 'Tirolesa Extrema' },
+    { url: '/img/instalacion4.png', label: 'Baby Park Seguro' },
+    { url: '/img/instalacion5.png', label: 'Entrada y Recepción' },
+    { url: '/img/instalacion6.png', label: 'Área de Piñatas' }
+  ];
+
+  const latLong = "19.563115801159583,-99.0201908967529";
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    
+    const heroTimer = setInterval(() => {
+      setCurrentHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const instTimer = setInterval(() => {
+      setCurrentInstalacion((prev) => (prev + 1) % instalaciones.length);
+    }, 4000);
 
-  const navigation = [
-    { name: 'Inicio', href: '#inicio' },
-    { name: 'Instalaciones', href: '#instalaciones' },
-    { name: 'Servicios', href: '#servicios' },
-    { name: 'Opiniones', href: '#opiniones' },
-    { name: 'Contacto', href: '#contacto' },
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearInterval(heroTimer);
+      clearInterval(instTimer);
+    };
+  }, [heroImages.length, instalaciones.length]);
+
+  const handlePackageSelection = (pkgName) => {
+    setSelectedPackage(pkgName);
+    const element = document.getElementById('reserva');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Datos de servicios con imágenes de fondo representativas
+  const serviciosData = [
+    { 
+      icon: <Zap />, 
+      t: "Tirolesa", 
+      d: "Aventura segura para los más valientes.",
+      bg: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Utensils />, 
+      t: "Banquete", 
+      d: "Menús variados y deliciosos para todos.",
+      bg: "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Music />, 
+      t: "Sonido Pro", 
+      d: "DJ y audio de alta fidelidad para el baile.",
+      bg: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Heart />, 
+      t: "Baby Park", 
+      d: "Zona acolchada para los más pequeñitos.",
+      bg: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Coffee />, 
+      t: "Área Adultos", 
+      d: "Espacio cómodo para los papás.",
+      bg: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Check />, 
+      t: "Limpieza", 
+      d: "Personal constante en áreas y baños.",
+      bg: "https://images.unsplash.com/photo-1581578731548-c64695ce6958?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <ShieldCheck />, 
+      t: "Seguridad", 
+      d: "Circuito cerrado y acceso controlado.",
+      bg: "https://images.unsplash.com/photo-1557597774-9d2739f8f0ec?auto=format&fit=crop&w=600&q=80" 
+    },
+    { 
+      icon: <Users />, 
+      t: "Staff", 
+      d: "Coordinadores de evento a tu disposición.",
+      bg: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80" 
+    }
   ];
 
   return (
-    <div className="font-sans text-gray-800 bg-white">
+    <div className="font-sans text-gray-800 bg-white selection:bg-orange-100 scroll-smooth">
       {/* Navbar */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-lg py-2' : 'bg-transparent py-4'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center gap-2">
-                <div className="bg-orange-500 p-2 rounded-full">
-                  <Smile className="h-6 w-6 text-white" />
-                </div>
-                <span className={`font-bold text-2xl tracking-tight ${scrolled ? 'text-orange-600' : 'text-white drop-shadow-md'}`}>
-                  Happy Kids
-                </span>
-              </div>
+      <nav className={`fixed w-full z-[60] transition-all duration-500 ${
+        scrolled ? 'bg-white shadow-lg py-2' : 'bg-transparent py-6'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+            <div className="bg-orange-500 p-2 rounded-2xl shadow-lg">
+              <Smile className="h-6 w-6 text-white" />
             </div>
-            
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-8 items-center">
-              {navigation.map((item) => (
-                <a 
-                  key={item.name} 
-                  href={item.href} 
-                  className={`text-sm font-medium hover:text-orange-400 transition-colors ${scrolled ? 'text-gray-700' : 'text-white drop-shadow-sm'}`}
-                >
-                  {item.name}
-                </a>
-              ))}
-              <a 
-                href="tel:5557790664"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-2 rounded-full font-bold transition-transform transform hover:scale-105 shadow-lg flex items-center gap-2"
-              >
-                <Phone size={18} />
-                Reservar
-              </a>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
-              <button onClick={toggleMenu} className={`p-2 rounded-md ${scrolled ? 'text-gray-700' : 'text-white'}`}>
-                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
-            </div>
+            <span className={`font-black text-2xl tracking-tighter ${scrolled ? 'text-orange-600' : 'text-white'}`}>
+              HAPPY KIDS
+            </span>
           </div>
+          
+          <div className="hidden md:flex space-x-8 items-center">
+            {['Inicio', 'Instalaciones', 'Paquetes', 'Servicios', 'Reserva'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className={`text-sm font-bold uppercase hover:text-orange-400 transition-colors ${scrolled ? 'text-gray-700' : 'text-white'}`}>
+                {item}
+              </a>
+            ))}
+            <a href="tel:5557790664" className="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-black shadow-lg flex items-center gap-2">
+              <Phone size={18} /> 55 5779 0664
+            </a>
+          </div>
+
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden p-2 ${scrolled ? 'text-gray-700' : 'text-white'}`}>
+            <Menu size={32} />
+          </button>
         </div>
-
-        {/* Mobile Menu Panel */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white absolute top-full left-0 w-full shadow-xl border-t border-gray-100">
-            <div className="px-4 pt-2 pb-6 space-y-2">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50"
-                >
-                  {item.name}
-                </a>
-              ))}
-              <a 
-                href="tel:5557790664"
-                className="block w-full text-center mt-4 bg-orange-500 text-white px-4 py-3 rounded-lg font-bold shadow-md"
-              >
-                Llamar Ahora
-              </a>
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* Hero Section */}
-      <section id="inicio" className="relative h-screen min-h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-400 via-purple-500 to-orange-400 overflow-hidden">
-        {/* Decorative Circles */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-32 h-32 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-32 h-32 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      <section id="inicio" className="relative h-screen flex items-center justify-center bg-black overflow-hidden text-center text-white">
+        {heroImages.map((img, index) => (
+          <div 
+            key={index}
+            className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
+              index === currentHeroSlide ? 'opacity-50' : 'opacity-0'
+            }`}
+            style={{ backgroundImage: `url(${img})` }}
+          ></div>
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
         
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-semibold mb-6 border border-white/30">
-            🎉 El mejor lugar para celebrar en Ecatepec
-          </span>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-lg">
-            Donde la magia y la <br/>
-            <span className="text-yellow-300">diversión</span> se encuentran
+        <div className="relative z-10 px-4 max-w-5xl">
+          <h1 className="text-6xl md:text-8xl font-black mb-8 leading-none tracking-tight">
+            FIESTAS QUE <br/> <span className="text-yellow-400 drop-shadow-2xl">HACEN HISTORIA</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto font-light">
-            Creamos recuerdos inolvidables para tus hijos con instalaciones seguras, juegos increíbles y el mejor ambiente familiar.
+          <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-medium">
+            Seguridad, diversión y los mejores banquetes en Tulpetlac.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#contacto" className="px-8 py-4 bg-white text-orange-600 rounded-full font-bold text-lg hover:bg-gray-100 transition-all shadow-lg transform hover:-translate-y-1">
-              Cotizar mi Fiesta
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <a href="#paquetes" className="px-10 py-5 bg-orange-500 text-white rounded-full font-black text-xl hover:scale-105 transition-transform shadow-2xl">
+              VER PAQUETES
             </a>
-            <a href="#instalaciones" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-bold text-lg hover:bg-white/10 transition-all">
-              Ver Instalaciones
+            <a href="#reserva" className="px-10 py-5 bg-white text-gray-900 rounded-full font-black text-xl hover:bg-gray-100 transition-all">
+              RESERVAR AHORA
             </a>
           </div>
         </div>
-        
-        {/* Curve Separator */}
-        <div className="absolute bottom-0 w-full overflow-hidden leading-[0]">
-          <svg className="relative block w-[calc(100%+1.3px)] h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-white"></path>
-          </svg>
-        </div>
       </section>
 
-      {/* Características / Instalaciones */}
-      <section id="instalaciones" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-orange-500 font-bold tracking-wide uppercase text-sm mb-2">¿Por qué elegirnos?</h2>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900">Diversión garantizada para todas las edades</h3>
-            <p className="mt-4 text-xl text-gray-500 max-w-2xl mx-auto">
-              Contamos con espacios diseñados para que chicos y grandes disfruten al máximo con total seguridad.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="group bg-blue-50 rounded-2xl p-8 hover:bg-blue-100 transition-colors duration-300 border border-blue-100">
-              <div className="bg-blue-500 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <PartyPopper className="text-white h-8 w-8" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-3">Tirolesa Extrema</h4>
-              <p className="text-gray-600">
-                ¡Vuela por el salón! Nuestra atracción estrella para los más aventureros, siempre bajo supervisión experta.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="group bg-orange-50 rounded-2xl p-8 hover:bg-orange-100 transition-colors duration-300 border border-orange-100">
-              <div className="bg-orange-500 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Waves className="text-white h-8 w-8" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-3">Piscina Divertida</h4>
-              <p className="text-gray-600">
-                Una zona acuática refrescante perfecta para días calurosos. Diversión segura y controlada para los niños.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="group bg-purple-50 rounded-2xl p-8 hover:bg-purple-100 transition-colors duration-300 border border-purple-100">
-              <div className="bg-purple-500 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <ShieldCheck className="text-white h-8 w-8" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-3">Área de Juegos Multinivel</h4>
-              <p className="text-gray-600">
-                Laberintos, resbaladillas y zonas de obstáculos. Un paraíso de exploración totalmente acolchado y seguro.
-              </p>
-            </div>
-          </div>
-
-          {/* Banner visual de contexto */}
-          <div className="mt-16 rounded-3xl overflow-hidden shadow-2xl relative h-80 bg-gray-900 flex items-center justify-center">
-             <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 to-blue-900/80 z-10"></div>
-             {/* Placeholder image background */}
-             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1530103862676-de3c9a59af57?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-50"></div>
-             
-             <div className="relative z-20 text-center px-6">
-                <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">¿Listo para la mejor fiesta del año?</h3>
-                <p className="text-blue-100 text-lg mb-8">Nos encargamos de todo para que tú solo te encargues de disfrutar.</p>
-                <a href="tel:5557790664" className="inline-flex items-center gap-2 bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-yellow-300 transition-colors">
-                  <Phone size={20} />
-                  Llamar al 55 5779 0664
-                </a>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Servicios Adicionales */}
-      <section id="servicios" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="md:w-1/2">
-              <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Más que un salón, una <span className="text-orange-500">experiencia completa</span></h2>
-              <p className="text-lg text-gray-600 mb-6">
-                En Happy Kids entendemos que cada detalle cuenta. Por eso ofrecemos servicios integrales para tu evento.
-              </p>
-              
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 bg-green-100 p-1 rounded-full mt-1">
-                    <Music className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-lg font-medium text-gray-900">Música y Ambiente</p>
-                    <p className="text-gray-500">Sistema de sonido profesional para animar tu evento.</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 bg-pink-100 p-1 rounded-full mt-1">
-                    <Cake className="h-5 w-5 text-pink-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-lg font-medium text-gray-900">Mobiliario Cómodo</p>
-                    <p className="text-gray-500">Mesas y sillas en perfecto estado para niños y adultos.</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 bg-yellow-100 p-1 rounded-full mt-1">
-                    <Star className="h-5 w-5 text-yellow-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-lg font-medium text-gray-900">Servicio de Staff</p>
-                    <p className="text-gray-500">Personal de apoyo, limpieza y seguridad en entrada (Valet).</p>
-                  </div>
-                </li>
-              </ul>
-              
-              <div className="mt-8 p-4 bg-orange-100 rounded-lg border-l-4 border-orange-500">
-                <p className="text-orange-800 font-medium italic">
-                  "El gerente muy amable y servicial, buen trato con la gente."
-                </p>
-              </div>
-            </div>
-            
-            <div className="md:w-1/2 grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                   <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg transform translate-y-4">
-                      <img src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Fiesta infantil" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"/>
-                   </div>
-                   <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                      <img src="https://images.unsplash.com/photo-1628260412297-a3377e45006f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Juegos" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"/>
-                   </div>
-                </div>
-                <div className="space-y-4 pt-8">
-                   <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                      <img src="https://images.unsplash.com/photo-1576615278693-f4c7d0d09995?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Pastel" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"/>
-                   </div>
-                   <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg transform -translate-y-4">
-                      <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Niños jugando" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"/>
-                   </div>
-                </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonios */}
-      <section id="opiniones" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900">Lo que dicen los papás</h2>
-            <div className="w-24 h-1 bg-orange-500 mx-auto mt-4 rounded-full"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Review 1 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative">
-              <div className="absolute -top-4 left-6 bg-orange-500 rounded-full p-2">
-                 <Star className="text-white h-5 w-5 fill-current" />
-              </div>
-              <p className="text-gray-600 mb-4 italic">"Muy padre el lugar, lo recomiendo muchísimo, el personal muy amable, y cuenta con dinámicas muy divertidas para niños y adultos. Si eres adulto con Alma de niño disfrutarás..."</p>
-              <div className="flex items-center mt-4">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">A</div>
-                <div className="ml-3">
-                  <p className="text-sm font-bold text-gray-900">Alma Oregel</p>
-                  <div className="flex text-yellow-400 text-xs">
-                    <Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Review 2 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative mt-4 md:mt-0">
-               <div className="absolute -top-4 left-6 bg-orange-500 rounded-full p-2">
-                 <Star className="text-white h-5 w-5 fill-current" />
-              </div>
-              <p className="text-gray-600 mb-4 italic">"Excelente lugar baños limpios y excelente servicio todos muy amables. Muy buen lugar para celebraciones infantiles y el área de juegos excelente."</p>
-              <div className="flex items-center mt-4">
-                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">U</div>
-                <div className="ml-3">
-                  <p className="text-sm font-bold text-gray-900">Usuario Google</p>
-                  <div className="flex text-yellow-400 text-xs">
-                    <Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Review 3 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative mt-4 md:mt-0">
-               <div className="absolute -top-4 left-6 bg-orange-500 rounded-full p-2">
-                 <Star className="text-white h-5 w-5 fill-current" />
-              </div>
-              <p className="text-gray-600 mb-4 italic">"Fui invitada hace poco y estuvo muy bien tanto el personal como la limpieza. La zona muy tranquila, regresaría sin dudarlo."</p>
-              <div className="flex items-center mt-4">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">C</div>
-                <div className="ml-3">
-                  <p className="text-sm font-bold text-gray-900">Cookie Lozano</p>
-                  <div className="flex text-yellow-400 text-xs">
-                    <Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" /><Star className="h-3 w-3 fill-current" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Info & Map Section */}
-      <section id="contacto" className="bg-gray-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            
-            {/* Info Column */}
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-3xl font-bold text-white mb-6">Visítanos y Reserva</h2>
-                <p className="text-gray-400 mb-8">
-                  Estamos listos para hacer de tu fiesta un evento inolvidable. Llámanos para agendar una cita, conocer el salón y apartar tu fecha.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <MapPin className="h-6 w-6 text-orange-500 mt-1 mr-4 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg">Dirección</h3>
-                    <p className="text-gray-300">Vía Adolfo López Mateos 299, Ejidos de Santa María Tulpetlac, 55400 Ecatepec de Morelos, Méx.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <Phone className="h-6 w-6 text-orange-500 mt-1 mr-4 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg">Teléfono</h3>
-                    <p className="text-gray-300">55 5779 0664</p>
-                    <a href="tel:5557790664" className="text-orange-400 hover:text-orange-300 text-sm mt-1 inline-block">Llamar ahora →</a>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <Clock className="h-6 w-6 text-orange-500 mt-1 mr-4 flex-shrink-0" />
-                  <div className="w-full">
-                    <h3 className="font-bold text-lg mb-2">Horarios de Atención</h3>
-                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
-                      <div>Lunes - Sábado:</div>
-                      <div className="text-right">11:30 a.m. – 7:00 p.m.</div>
-                      <div>Domingo:</div>
-                      <div className="text-right">11:30 a.m. – 5:00 p.m.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Map Column */}
-            <div className="h-full min-h-[400px] bg-gray-800 rounded-2xl overflow-hidden shadow-2xl relative group">
-                {/* Simulated Map UI */}
-                <div className="w-full h-full bg-slate-700 flex flex-col items-center justify-center relative">
-                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Mapa Estático" className="w-full h-full object-cover opacity-30"/>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white p-4 rounded-lg shadow-xl text-center transform group-hover:scale-105 transition-transform">
-                            <MapPin className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                            <p className="text-gray-900 font-bold text-sm">Happy Kids</p>
-                            <p className="text-gray-500 text-xs">Ecatepec, Méx</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur p-4 rounded-xl">
-                   <p className="text-gray-800 text-sm font-medium flex items-center gap-2">
-                       <MapPin size={16}/> Vía Adolfo López Mateos 299
-                   </p>
-                   <a 
-                     href="https://www.google.com/maps/search/?api=1&query=Salón+de+fiestas+infantiles+happy+kids+Ecatepec" 
-                     target="_blank" 
-                     rel="noreferrer"
-                     className="mt-2 block w-full bg-blue-600 text-white text-center py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
-                   >
-                       Ver en Google Maps
-                   </a>
-                </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-950 text-gray-400 py-8 border-t border-gray-800">
+      {/* Instalaciones */}
+      <section id="instalaciones" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-             <div className="bg-orange-600 p-1.5 rounded-full">
-                  <Smile className="h-4 w-4 text-white" />
-             </div>
-             <span className="text-white font-bold text-lg">Happy Kids</span>
+          <div className="inline-flex items-center gap-3 text-orange-500 font-bold mb-4 uppercase tracking-widest">
+            <Camera size={20} /> NUESTRO MÁGICO LUGAR
           </div>
-          <p className="text-sm">© {new Date().getFullYear()} Salón de fiestas infantiles Happy Kids. Todos los derechos reservados.</p>
+          <h2 className="text-4xl md:text-5xl font-black mb-12">Explora las <span className="text-blue-500">Instalaciones</span></h2>
+          
+          <div className="relative max-w-5xl mx-auto h-[350px] md:h-[600px] rounded-[40px] overflow-hidden shadow-2xl group bg-gray-200">
+            {/* Imagen de respaldo mientras cargan archivos locales */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566415117399-c80f4c0c76d7?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center opacity-20"></div>
+            
+            {instalaciones.map((inst, idx) => (
+              <div 
+                key={idx}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                  idx === currentInstalacion ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                }`}
+              >
+                <img 
+                  src={inst.url} 
+                  alt={inst.label} 
+                  className="w-full h-full object-cover relative z-10"
+                  onError={(e) => { e.target.style.display = 'none'; }} 
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent text-white text-left z-20">
+                  <span className="text-2xl font-black">{inst.label}</span>
+                </div>
+              </div>
+            ))}
+            
+            <button onClick={() => setCurrentInstalacion(prev => (prev - 1 + instalaciones.length) % instalaciones.length)} className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-4 rounded-full backdrop-blur-md transition-all z-30">
+              <ChevronLeft className="text-white" size={32} />
+            </button>
+            <button onClick={() => setCurrentInstalacion(prev => (prev + 1) % instalaciones.length)} className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-4 rounded-full backdrop-blur-md transition-all z-30">
+              <ChevronRight className="text-white" size={32} />
+            </button>
+          </div>
         </div>
+      </section>
+
+      {/* Servicios con Fondos Corregidos */}
+      <section id="servicios" className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black mb-4">Todo lo que <span className="text-orange-500">Necesitas</span></h2>
+            <p className="text-gray-600 font-bold">Un evento sin preocupaciones con servicios de primera clase.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {serviciosData.map((s, i) => (
+              <div key={i} className="group relative bg-white h-64 rounded-3xl shadow-lg overflow-hidden transition-all hover:-translate-y-2">
+                {/* Imagen de fondo sin copyright */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" 
+                  style={{ backgroundImage: `url(${s.bg})` }}
+                ></div>
+                {/* Overlay para legibilidad */}
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent"></div>
+                
+                <div className="relative h-full p-8 flex flex-col justify-end text-white">
+                  <div className="bg-orange-500 w-fit p-3 rounded-2xl mb-4 shadow-lg">
+                    {React.cloneElement(s.icon, { size: 24 })}
+                  </div>
+                  <h4 className="font-black text-xl mb-1">{s.t}</h4>
+                  <p className="text-gray-200 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-2">
+                    {s.d}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Paquetes */}
+      <section id="paquetes" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-center text-4xl md:text-5xl font-black mb-16">Paquetes <span className="text-blue-500">Especiales</span></h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: "Paquete Básico", price: "$4,500", features: ["50 adultos / 30 niños", "5 horas de salón", "Uso de todos los juegos", "Personal de apoyo"] },
+              { name: "Paquete Mágico", price: "$7,800", features: ["80 adultos / 40 niños", "6 horas de salón", "Menú infantil incluido", "Refrescos ilimitados", "DJ y Luces"], popular: true },
+              { name: "Paquete Premium", price: "$12,500", features: ["120 adultos / 60 niños", "7 horas de salón", "Banquete 3 tiempos", "Pastel temático", "Mesa de dulces"] }
+            ].map((pkg, i) => (
+              <div key={i} className={`bg-gray-50 rounded-[40px] p-10 shadow-xl flex flex-col ${pkg.popular ? 'ring-4 ring-orange-500 scale-105 z-10 bg-white' : ''}`}>
+                <h3 className="text-2xl font-black mb-4 uppercase tracking-tighter">{pkg.name}</h3>
+                <div className="text-5xl font-black text-orange-600 mb-8 tracking-tighter">{pkg.price}</div>
+                <ul className="space-y-4 mb-10 flex-grow">
+                  {pkg.features.map((feat, j) => (
+                    <li key={j} className="flex gap-3 items-start text-gray-600 font-bold leading-tight">
+                      <Check className="text-green-500 shrink-0" size={20} /> {feat}
+                    </li>
+                  ))}
+                </ul>
+                <button 
+                  onClick={() => handlePackageSelection(pkg.name)}
+                  className="w-full py-4 bg-gray-900 text-white rounded-2xl font-black hover:bg-orange-600 transition-all"
+                >
+                  LO QUIERO
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reserva y Horarios */}
+      <section id="reserva" className="py-24 bg-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16">
+          <div className="bg-white text-gray-900 rounded-[50px] p-8 md:p-12 shadow-2xl">
+            <h2 className="text-3xl font-black mb-8">Cotiza tu Fecha</h2>
+            <form className="grid md:grid-cols-2 gap-4 font-bold">
+              <input type="text" placeholder="Nombre completo" className="w-full p-4 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:border-orange-500 transition-colors" />
+              <input type="tel" placeholder="Teléfono" className="w-full p-4 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:border-orange-500 transition-colors" />
+              <input type="date" className="w-full p-4 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:border-orange-500 transition-colors" />
+              <select 
+                value={selectedPackage} 
+                onChange={(e) => setSelectedPackage(e.target.value)}
+                className="w-full p-4 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:border-orange-500 transition-colors"
+              >
+                <option value="Paquete Mágico">Paquete Mágico</option>
+                <option value="Paquete Básico">Paquete Básico</option>
+                <option value="Paquete Premium">Paquete Premium</option>
+              </select>
+              <textarea placeholder="Cuéntanos más sobre tu evento..." className="md:col-span-2 w-full p-4 rounded-2xl border-2 border-gray-100 bg-gray-50 h-32 outline-none focus:border-orange-500 transition-colors"></textarea>
+              <button type="button" className="md:col-span-2 bg-orange-500 text-white py-5 rounded-2xl font-black text-xl hover:bg-orange-600 shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+                ENVIAR SOLICITUD <Send />
+              </button>
+            </form>
+          </div>
+
+          <div className="flex flex-col justify-center">
+            <div className="mb-12">
+              <div className="inline-flex items-center gap-2 text-yellow-400 font-black mb-4 uppercase tracking-widest">
+                <Clock size={24} /> HORARIOS DE ATENCIÓN
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">Visítanos y conoce nuestras <span className="text-orange-500">promociones.</span></h2>
+              <div className="space-y-4">
+                <div className="flex justify-between p-4 bg-gray-800 rounded-2xl border-l-4 border-orange-500">
+                  <span className="font-bold">Lunes a Viernes</span>
+                  <span className="text-orange-400 font-black">10:00 AM - 6:00 PM</span>
+                </div>
+                <div className="flex justify-between p-4 bg-gray-800 rounded-2xl border-l-4 border-yellow-400">
+                  <span className="font-bold">Sábados</span>
+                  <span className="text-yellow-400 font-black">11:00 AM - 4:00 PM</span>
+                </div>
+                <div className="flex justify-between p-4 bg-gray-800 rounded-2xl border-l-4 border-blue-500">
+                  <span className="font-bold">Domingos</span>
+                  <span className="text-blue-400 font-black">Previa Cita</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800 p-8 rounded-[40px] flex items-center gap-6">
+              <div className="bg-orange-500 p-4 rounded-3xl">
+                <MapPin size={32} />
+              </div>
+              <div>
+                <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-1">Ubicación</p>
+                <p className="font-black text-lg leading-tight">Vía Adolfo López Mateos 299, Santa María Tulpetlac, Ecatepec.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mapa */}
+      <section className="h-[500px] w-full bg-gray-100">
+        <iframe 
+          src={`https://www.google.com/maps?q=${latLong}&z=17&output=embed`}
+          width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
+          title="Ubicación Happy Kids"
+        ></iframe>
+      </section>
+
+      <footer className="py-12 bg-black text-white text-center">
+        <div className="flex justify-center gap-2 mb-6">
+          <div className="bg-orange-500 p-2 rounded-xl"><Smile /></div>
+          <span className="font-black text-2xl tracking-tighter">HAPPY KIDS</span>
+        </div>
+        <p className="text-gray-500 font-bold">Haciendo felices a los niños de Ecatepec por más de 10 años.</p>
+        <p className="mt-8 text-gray-700 text-sm">© {new Date().getFullYear()} Todos los derechos reservados.</p>
       </footer>
-      
-      {/* Botón flotante para móvil */}
-      <a 
-        href="tel:5557790664"
-        className="fixed bottom-6 right-6 md:hidden bg-green-500 text-white p-4 rounded-full shadow-2xl z-50 hover:bg-green-600 transition-colors animate-bounce"
-        aria-label="Llamar"
-      >
-        <Phone size={24} />
-      </a>
     </div>
   );
 }
